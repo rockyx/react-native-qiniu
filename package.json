@@ -1,0 +1,36 @@
+{
+  "author": {
+    "name": "Rocky Tsui",
+    "url": "Rocky Tsui"
+  },
+  "bugs": {
+    "url": "https://github.com/rockyx/react-native-qiniu/issues"
+  },
+  "contributors": [
+    {
+      "name": "Rokcy Tsui",
+      "email": "wesharer@gmail.com"
+    }
+  ],
+  "description": "A React Native module for Qiniu",
+  "homepage": "https://github.com/rockyx/react-native-qiniu#readme",
+  "keywords": [
+    "react-native",
+    "react-native-qiniu",
+    "react",
+    "native",
+    "qiniu"
+  ],
+  "main": "index.js",
+  "name": "react-native-qiniu",
+  "nativePackage": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rockyx/react-native-qiniu.git"
+  },
+  "scripts": {
+    "prepare": "rm -rf android/build Example/android/build Example/android/app/build node_modules"
+  },
+  "types": "./index.d.ts",
+  "version": "0.0.1"
+}
