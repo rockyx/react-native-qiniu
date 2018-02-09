@@ -57,7 +57,42 @@ RCT_EXPORT_MODULE()
 RCT_EXPORT_METHOD(uploadFile: (NSDictionary*)params
                   resolver: (RCTPromiseResolveBlock)resolve
                   rejecter: (RCTPromiseRejectBlock)reject) {
+    NSURL *fileUrl = [[NSURL alloc] initWithString: params[@"fileUrl"]];
     
+    if ([fileUrl isFileURL]) {
+        [[QiniuManagerSingleton shared].upManager
+         putFile: [fileUrl absoluteString]
+         key: params[@"objectKey"]
+         token: params[@"token"]
+         complete:^(QNResponseInfo *info, NSString *key, NSDictionary *resp) {
+             NSLog(@"info:%@", info);
+             NSLog(@"resp:%@", resp);
+             NSError *qiniuError = info.error;
+             
+             if (info.statusCode == 200) {
+                 if ([[resp[@"status"] description] isEqualToString: @"0"]) {
+                     NSDictionary *result = [[NSDictionary alloc] init];
+                     [result setValue: params[@"objectKey"] forKey: @"objectKey"];
+                     resolve(result);
+                 } else {
+                     NSError *error = [NSError
+                                       errorWithDomain: @"react-native-qiniu"
+                                       code: [resp[@"status"] intValue]
+                                       userInfo: resp];
+                     reject(resp[@"status"], resp[@"info"], error);
+                 }
+             } else {
+                 reject(@"-1", [qiniuError localizedDescription], qiniuError);
+             }
+         }
+         option: nil];
+    } else {
+        NSError *error = [NSError
+                          errorWithDomain: @"react-native-qiniu"
+                          code: -1
+                          userInfo: nil];
+        reject(@"-1", @"请打开有效文件", error);
+    }
 }
     
 @end
