@@ -58,11 +58,12 @@ RCT_EXPORT_METHOD(uploadFile: (NSDictionary*)params
                   resolver: (RCTPromiseResolveBlock)resolve
                   rejecter: (RCTPromiseRejectBlock)reject) {
     NSURL *fileUrl = [[NSURL alloc] initWithString: params[@"fileUrl"]];
+    NSString *objectKey = params[@"objectKey"];
     
     if ([fileUrl isFileURL]) {
         [[QiniuManagerSingleton shared].upManager
-         putFile: [fileUrl absoluteString]
-         key: params[@"objectKey"]
+         putFile: [[fileUrl absoluteString] stringByReplacingOccurrencesOfString:@"file://" withString:@""]
+         key: objectKey
          token: params[@"token"]
          complete:^(QNResponseInfo *info, NSString *key, NSDictionary *resp) {
              NSLog(@"info:%@", info);
@@ -70,17 +71,9 @@ RCT_EXPORT_METHOD(uploadFile: (NSDictionary*)params
              NSError *qiniuError = info.error;
              
              if (info.statusCode == 200) {
-                 if ([[resp[@"status"] description] isEqualToString: @"0"]) {
-                     NSDictionary *result = [[NSDictionary alloc] init];
-                     [result setValue: params[@"objectKey"] forKey: @"objectKey"];
-                     resolve(result);
-                 } else {
-                     NSError *error = [NSError
-                                       errorWithDomain: @"react-native-qiniu"
-                                       code: [resp[@"status"] intValue]
-                                       userInfo: resp];
-                     reject(resp[@"status"], resp[@"info"], error);
-                 }
+                 NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
+                 [result setObject: objectKey forKey: @"objectKey"];
+                 resolve(result);
              } else {
                  reject(@"-1", [qiniuError localizedDescription], qiniuError);
              }

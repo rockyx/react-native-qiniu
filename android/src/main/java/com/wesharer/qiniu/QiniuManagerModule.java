@@ -2,19 +2,18 @@ package com.wesharer.qiniu;
 
 import android.util.Log;
 
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableMap;
 import com.qiniu.android.common.FixedZone;
-import com.qiniu.android.http.ResponseInfo;
 import com.qiniu.android.storage.Configuration;
-import com.qiniu.android.storage.UpCompletionHandler;
 import com.qiniu.android.storage.UploadManager;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 public class QiniuManagerModule extends ReactContextBaseJavaModule {
 
@@ -44,13 +43,15 @@ public class QiniuManagerModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void uploadFile(ReadableMap params, final Promise promise) {
-        String filePath = params.getString("fileUrl");
+        String filePath = params.getString("fileUrl").replaceFirst("file://", "");
         final String objectKey = params.getString("objectKey");
         final String token = params.getString("token");
         uploadManager.put(filePath, objectKey, token, (key, info, res) -> {
             if (info.isOK()) {
                 Log.i("react-native-qiniu", "Upload Success");
-                promise.resolve(objectKey);
+                WritableMap result = Arguments.createMap();
+                result.putString("objectKey", objectKey);
+                promise.resolve(result);
             } else {
                 Log.i("react-native-qiniu", "Upload Fail");
                 try {
