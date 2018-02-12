@@ -87,5 +87,8 @@ RCT_EXPORT_METHOD(uploadFile: (NSDictionary*)params
         reject(@"-1", @"请打开有效文件", error);
     }
 }
-    
+
++(BOOL) requiresMainQueueSetup {
+    return YES;
+}
 @end
