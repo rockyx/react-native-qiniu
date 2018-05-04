@@ -31,7 +31,7 @@ public class QiniuManagerModule extends ReactContextBaseJavaModule {
                 .responseTimeout(60)          // 服务器响应超时。默认60秒
                 //.recorder(recorder)           // recorder分片上传时，已上传片记录器。默认null
                 //.recorder(recorder, keyGen)   // keyGen 分片上传时，生成标识符，用于片记录器区分是那个文件的上传记录
-                .zone(FixedZone.zone0)        // 设置区域，指定不同区域的上传域名、备用域名、备用IP。
+//                .zone(FixedZone.zone0)        // 设置区域，指定不同区域的上传域名、备用域名、备用IP。
                 .build();
         uploadManager = new UploadManager(config);
     }
